@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>home</title>
+	<meta charset="utf-8">
+	<title>Survey</title>
 
 <!-- Latest compiled and minified CSS & JS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -13,5 +14,82 @@
 	<div class="container">
 		<h1>Take the Survey</h1>
 		<hr>
+		<form role="form">
+			<h2>About you</h2>
+			<div class="form-group">
+				<label for="usr">Name:</label>
+				<input type="text" class="form-control" id="name">
+			</div>
+			<div class="form-group">
+				<label for="pic">URL for Photo:</label>
+				<input type="text" class="form-control" id="pic">
+			</div>
+			<hr>
+			<h2>Rate how strongly you agree with the following statements:</h2>
+			<h4>1 = Do Not Agree at All</h4>
+			<h4>5 = Strongly Agree</h4>
+			<hr>
+			<h3>Question 1</h3>
+			<h4>I have entered, and won, a professional eating contest.</h4>
+			<div class="form-group">
+				<!-- <label for="sel1">Select list:</label> -->
+				<select class="form-control" id="quest1">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+			</div>
+			<h3>Question 2</h3>
+			<h4>I would rather attend a Pearl Jam concert than a Taylor Swift show.</h4>
+			<div class="form-group">
+				<!-- <label for="sel1">Select list:</label> -->
+				<select class="form-control" id="quest2">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+			</div>
+			<h3>Question 3</h3>
+			<h4>I like my steak well done, not a trace of pink.</h4>
+			<div class="form-group">
+				<!-- <label for="sel1">Select list:</label> -->
+				<select class="form-control" id="quest3">
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>
+			</div>
+			<button type="button" class="btn btn-success btn-block" id="submit">Submit</button>
+		</form>
 	</div>
+<script type="text/javascript">
+		 
+	$('#submit').on("click", function(){
+
+		var newFriend = 
+		{
+			name: $("#name").val().trim(),
+			photo: $("#pic").val().trim(),
+			scores: [1, 1, 1]
+		};
+
+		console.log(newFriend);
+
+		var currentURL = window.location.origin;
+
+		// =======
+		$.post(currentURL + "/api/friends", newFriend,
+	    function(data){});
+
+return false;
+
+});
+
+</script>
 </body>
