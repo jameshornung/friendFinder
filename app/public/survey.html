@@ -110,9 +110,6 @@
 			scores: answerArray
 		};
 
-		
-		console.log('new friend = ', newFriend);
-
 		var currentURL = window.location.origin;
 
 		// =======
@@ -121,10 +118,23 @@
 
 		$.ajax({url: currentURL + "/api/friends", method: "GET"}) 
 			.done(function(res){
-				matchName = res[2].name;
+				
+				var differenceArray = [];
+				// console.log(newFriend.scores[0]);
+				// console.log(res[0].scores[0]);
+
+				for(i=0; i<res.length - 1; i++){
+					for(j=0; j<3; j++){
+						var currentDifference = newFriend.scores[j] - res[i].scores[j];
+						differenceArray.push(Math.abs(currentDifference));
+					}
+					console.log(res[i].name)
+				}
+				console.log(differenceArray);
+				friendName = res[2].name;
 				friendPic = res[2].photo;
 				
-				var friendName = '<h4>' + matchName + '<h4>';
+				var friendName = '<h4>' + friendName + '<h4>';
 				var friendPic = '<img src=' + friendPic + '>';
 
 				$('#friend-modal').modal('show');
