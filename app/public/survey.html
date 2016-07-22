@@ -96,46 +96,57 @@
 <script type="text/javascript">
 		 
 	$('#submit').on("click", function(){
-		// console.log(parseInt($('#quest1').val().substring(0,1)));
-
+		//empty array to hold the value from the survey questions
 		var answerArray = [];
-
+		//loop to push the answers from survey to the array (NEED TO UPDATE i< AS QUESTIONS ARE ADDED)
 		for(i=1; i<4; i++){
 			answerArray.push(parseInt($('#quest' + i).val().substring(0,1)));
 		}
+		//creating an object to hold the newly entered information
 		var newFriend = 
 		{
 			name: $("#name").val().trim(),
 			photo: $("#pic").val().trim(),
 			scores: answerArray
 		};
-
+		//records the current location (should work after deployment)
 		var currentURL = window.location.origin;
 
-		// =======
+		//add the newly entered information to the friend array
 		$.post(currentURL + "/api/friends", newFriend,
 	    function(data){});
-
+		//access our array of potential friends so we can analyze it for the best match
 		$.ajax({url: currentURL + "/api/friends", method: "GET"}) 
 			.done(function(res){
 				
+				var bestFriend;
+				var currentBest = 100;
 				var differenceArray = [];
-				// console.log(newFriend.scores[0]);
-				// console.log(res[0].scores[0]);
 
-				for(i=0; i<res.length - 1; i++){
+				for(i=0; i < res.length - 1; i++){
+
 					for(j=0; j<3; j++){
 						var currentDifference = newFriend.scores[j] - res[i].scores[j];
 						differenceArray.push(Math.abs(currentDifference));
 					}
-					console.log(res[i].name)
+
+					var difference = differenceArray.reduce(add, 0);
+					
+					if(difference < currentBest){
+						console.log(res[i].name, 'if function ran');
+						bestFriend = res[i];
+						currentBest = difference;
+						differenceArray = [];
+					}
+					else{
+						console.log(res[i].name, 'else function ran');
+						differenceArray =[];
+					}
+					
 				}
-				console.log(differenceArray);
-				friendName = res[2].name;
-				friendPic = res[2].photo;
 				
-				var friendName = '<h4>' + friendName + '<h4>';
-				var friendPic = '<img src=' + friendPic + '>';
+				var friendName = '<h4>' + bestFriend.name + '<h4>';
+				var friendPic = '<img src=' + bestFriend.photo + '>';
 
 				$('#friend-modal').modal('show');
 				$('#friend-modal h4').html(friendName);
@@ -147,6 +158,10 @@
 return false;
 
 });
+
+function add(a, b){
+	return a+b;
+};
 
 </script>
 </body>
