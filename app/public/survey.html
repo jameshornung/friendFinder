@@ -8,34 +8,32 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 	<div class="container">
 	
 		<h1>Take the Survey</h1>
 		<hr>
-		<form role="form">
+		<form role="form" id="survey">
 			<h2>About you</h2>
 			<div class="form-group">
-				<label for="usr">Name:</label>
+				<label for="usr">Name: (Required)</label>
 				<input type="text" class="form-control" id="name">
 			</div>
 			<div class="form-group">
-				<label for="pic">URL for Photo:</label>
+				<label for="pic">URL for Photo: (Required)</label>
 				<input type="text" class="form-control" id="pic">
+				<p>Generic Man: http://clipartix.com/wp-content/uploads/2016/05/Stick-figure-construction-worker-clipart-image-clip-art-a.jpg<p>
+				<p>Generic Woman: https://s-media-cache-ak0.pinimg.com/236x/a1/01/50/a1015051b09805f58525240c87b5c50b.jpg</p>
 			</div>
 			<hr>
 			<h2>Rate how strongly you agree with the following statements:</h2>
-			<h4>1 = Do Not Agree at All</h4>
-			<h4>5 = Strongly Agree</h4>
-			<hr>
 			<h3>Question 1</h3>
-			<h4>I have entered, and won, a professional eating contest.</h4>
+			<h4>I often take lifestyle advice from Gwyneth Paltrow.</h4>
 			<div class="form-group">
-				<!-- <label for="sel1">Select list:</label> -->
 				<select class="form-control" id="quest1">
-					<option>1 (Absolutely Disagree)</option>
+					<option>1 (Strongly Disagree)</option>
 					<option>2</option>
 					<option>3</option>
 					<option>4</option>
@@ -45,9 +43,8 @@
 			<h3>Question 2</h3>
 			<h4>I would rather attend a Pearl Jam concert than a Taylor Swift show.</h4>
 			<div class="form-group">
-				<!-- <label for="sel1">Select list:</label> -->
 				<select class="form-control" id="quest2">
-					<option>1 (Absolutely Disagree)</option>
+					<option>1 (Strongly Disagree)</option>
 					<option>2</option>
 					<option>3</option>
 					<option>4</option>
@@ -57,9 +54,8 @@
 			<h3>Question 3</h3>
 			<h4>I like my steak well done, not a trace of pink.</h4>
 			<div class="form-group">
-				<!-- <label for="sel1">Select list:</label> -->
 				<select class="form-control" id="quest3">
-					<option>1 (Absolutely Disagree)</option>
+					<option>1 (Strongly Disagree)</option>
 					<option>2</option>
 					<option>3</option>
 					<option>4</option>
@@ -82,7 +78,6 @@
           <h4 class="modal-title"></h4>
         </div>
         <div class="modal-body">
-          <p>this is the correct modal.</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -91,70 +86,81 @@
       
     </div>
   </div>
-
+  <div class="footer">
+  	<br>
+  	<br>
+  </div>
 	</div>
 <script type="text/javascript">
 		 
 	$('#submit').on("click", function(){
-		//empty array to hold the value from the survey questions
-		var answerArray = [];
-		//loop to push the answers from survey to the array (NEED TO UPDATE i< AS QUESTIONS ARE ADDED)
-		for(i=1; i<4; i++){
-			answerArray.push(parseInt($('#quest' + i).val().substring(0,1)));
+		//check to make sure the form is filled out
+		var validEntry;
+		if($("#name").val().trim() === ''){
+			alert('Please enter a name');
 		}
-		//creating an object to hold the newly entered information
-		var newFriend = 
-		{
-			name: $("#name").val().trim(),
-			photo: $("#pic").val().trim(),
-			scores: answerArray
-		};
-		//records the current location (should work after deployment)
-		var currentURL = window.location.origin;
+		else if($("#pic").val().trim() === ''){
+			alert('Please enter a link to photo');
+		}
+		else{
+			//empty array to hold the value from the survey questions
+			var answerArray = [];
+			//loop to push the answers from survey to the array (NEED TO UPDATE i< AS QUESTIONS ARE ADDED)
+			for(i=1; i<4; i++){
+				answerArray.push(parseInt($('#quest' + i).val().substring(0,1)));
+			}
+			//creating an object to hold the newly entered information
+			var newFriend = 
+			{
+				name: $("#name").val().trim(),
+				photo: $("#pic").val().trim(),
+				scores: answerArray
+			};
+			//records the current location (should work after deployment)
+			var currentURL = window.location.origin;
 
-		//add the newly entered information to the friend array
-		$.post(currentURL + "/api/friends", newFriend,
-	    function(data){});
-		//access our array of potential friends so we can analyze it for the best match
-		$.ajax({url: currentURL + "/api/friends", method: "GET"}) 
-			.done(function(res){
-				
+			//add the newly entered information to the friend array
+			$.post(currentURL + "/api/friends", newFriend,
+		    function(data){});
+			//access our array of potential friends so we can analyze it for the best match
+			$.ajax({url: currentURL + "/api/friends", method: "GET"}).done(function(res){
+					
 				var bestFriend;
 				var currentBest = 100;
 				var differenceArray = [];
-
+				//loops through all friends with the exception of the one just created
 				for(i=0; i < res.length - 1; i++){
-
+					//compares the values from the survey questions and pushes the absolute value of the differences to the difference array
 					for(j=0; j<3; j++){
 						var currentDifference = newFriend.scores[j] - res[i].scores[j];
 						differenceArray.push(Math.abs(currentDifference));
 					}
-
+					//adds the values in the array to give a single value that represents the difference between a potential friend and the current entry
 					var difference = differenceArray.reduce(add, 0);
-					
+					//if the difference is less than any of the previous comparisons, push the current profile to the best match position
 					if(difference < currentBest){
-						console.log(res[i].name, 'if function ran');
 						bestFriend = res[i];
 						currentBest = difference;
 						differenceArray = [];
 					}
+					//or just move on
 					else{
-						console.log(res[i].name, 'else function ran');
 						differenceArray =[];
 					}
 					
 				}
-				
+				//set up the display for the modal
 				var friendName = '<h4>' + bestFriend.name + '<h4>';
-				var friendPic = '<img src=' + bestFriend.photo + '>';
-
+				var friendPic = '<img width="300px" src=' + bestFriend.photo + '>';
+				//show the modal
 				$('#friend-modal').modal('show');
 				$('#friend-modal h4').html(friendName);
 				$('.modal-body').html(friendPic);
+				//clear the entries
+				$('#survey')[0].reset();
+				
 			});
-
-
-		
+		}
 return false;
 
 });
